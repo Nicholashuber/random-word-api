@@ -1,0 +1,43 @@
+public class RandomWordApi {
+	@future(callout = true)
+	public static void getCallout(String recid) {
+		System.debug('recid77777777:--> ' + recid);
+		// Instantiate a new http object
+		Http h = new Http();
+		// Instantiate a new HTTP request, specify the method (GET) as well as the endpoint
+		HttpRequest req = new HttpRequest();
+		req.setEndpoint('https://random-word-api.herokuapp.com/key?');
+		req.setMethod('GET');
+		// Send the request, and return a response
+		HttpResponse res = h.send(req);
+		System.debug('recid:--> ' + recid);
+		System.debug('response:--> ' + res.getBody());
+		String keystokingdom = res.getBody();
+		String finalendpoint = 'https://random-word-api.herokuapp.com/word?key=' + keystokingdom + '&number=1';
+		System.debug('finalendpoint:--> ' + finalendpoint);
+    
+    
+    
+		// Instantiate a new http object
+		Http h2 = new Http();
+		// Instantiate a new HTTP request, specify the method (GET) as well as the endpoint
+		HttpRequest req2 = new HttpRequest();
+		req2.setEndpoint('https://random-word-api.herokuapp.com/word?key=' + keystokingdom + '&number=1');
+		req2.setMethod('GET');
+		// Send the request, and return a response
+		HttpResponse res2 = h2.send(req2);
+		System.debug('recid2:--> ' + recid);
+		System.debug('response2:--> ' + res2.getBody());
+		System.debug('response json:--> ' + JSON.deserializeUntyped(res2.getBody()));
+		// Instantiate a new http object
+		// 
+		JSONGenerator gen = JSON.createGenerator(true); // set boolean value true if you want  pretty format applied
+		// Write data to the JSON string.
+		List < Account > accts = [Select Id, MicroBilt_Response__c From Account Where id = : recid limit 1];
+		for (Account acct: accts) {
+			acct.MicroBilt_Response__c = res2.getBody();
+		}
+		update accts;
+		return;
+	}
+}
